@@ -242,7 +242,11 @@
 #   Valid values: true, false
 #
 # [*plugins*]
-#   String, Array of Strings.  Plugins to install on the node
+#   String, Array of Strings.  Plugins to install on the node. Type is the default "file".
+#   Default: []
+#
+# [*plugins_pkg*]
+#   String, Array of Strings.  Plugins to install on the node. Type is "package" (will honor the sensu_plugin_provider setting). Installation via gems is the preferred method (see: http://sensu-plugins.io/docs/installation_instructions.html)
 #   Default: []
 #
 # [*plugins_dir*]
@@ -405,6 +409,7 @@ class sensu (
   $safe_mode                      = false,
   $plugins                        = [],
   $plugins_dir                    = undef,
+  $plugins_pkg                    = [],
   $purge                          = false,
   $purge_config                   = false,
   $purge_plugins_dir              = false,
@@ -592,6 +597,7 @@ class sensu (
   if $plugins_dir {
     sensu::plugin { $plugins_dir: type => 'directory' }
   } else {
+    sensu::plugin { $plugins_pkg: type     => 'package' }
     sensu::plugin { $plugins: install_path => '/etc/sensu/plugins' }
   }
 
